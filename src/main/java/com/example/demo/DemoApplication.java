@@ -13,13 +13,21 @@ public class DemoApplication {
         SpringApplication.run(DemoApplication.class, args);
     }
 
-	@Bean
-	public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
-		return builder.routes()
-			.route("path_route", r -> r.path("/bing")
-				.uri("https://www.bing.com/"))
-			.route("path2", r -> r.path("/google")
-				.uri("https://google.com"))
-			.build();
-	}
+    @Bean
+    public RouteLocator customRouteLocator(RouteLocatorBuilder builder, AllowListPredicateFactory af) {
+
+
+        return builder.routes()
+            .route("path_route", r -> r.path("/bing")
+                .uri("https://www.bing.com/"))
+            .route("path2", r -> r.path("/google")
+                .uri("https://google.com"))
+            .route("path_predicate", r -> r.predicate(af.apply(new AllowListPredicateFactory.Config(true))).uri("http://google.com"))
+            .build();
+    }
+
+    @Bean
+    public AllowListPredicateFactory allowListPredicateFactory() {
+        return new AllowListPredicateFactory(AllowListPredicateFactory.Config.class);
+    }
 }
