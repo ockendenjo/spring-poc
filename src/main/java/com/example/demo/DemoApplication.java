@@ -6,6 +6,8 @@ import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 
+import java.util.function.Predicate;
+
 @SpringBootApplication
 public class DemoApplication {
 
@@ -22,12 +24,13 @@ public class DemoApplication {
                 .uri("https://www.bing.com/"))
             .route("path2", r -> r.path("/google")
                 .uri("https://google.com"))
-            .route("path_predicate", r -> r.predicate(af.apply(new AllowListPredicateFactory.Config(true))).uri("http://google.com"))
+            .route("path_predicate", r -> r.predicate(af.apply((Void) null)).uri("http://google.com"))
+            .route("path_predication2", r -> r.predicate(Predicate.not(af.apply((Void) null))).uri("https://www.bing.com"))
             .build();
     }
 
     @Bean
     public AllowListPredicateFactory allowListPredicateFactory() {
-        return new AllowListPredicateFactory(AllowListPredicateFactory.Config.class);
+        return new AllowListPredicateFactory(null);
     }
 }
